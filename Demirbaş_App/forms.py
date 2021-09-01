@@ -46,4 +46,7 @@ class WorkerName(forms.ModelForm):
         model = Worker
         fields = ["person"]
 
+class File(forms.FileInput):
+    pass
+
 

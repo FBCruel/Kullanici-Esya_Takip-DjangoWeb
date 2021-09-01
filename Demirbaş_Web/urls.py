@@ -41,5 +41,6 @@ urlpatterns = [
     path('dropdown/<int:id>-<int:pid>', views.dropdown, name="dropdown"),
     path('superregister', views.superregister, name="superregister"),
     path('register', views.register, name="register"),
-    path('users', views.users, name="users")
+    path('users', views.users, name="users"),
+    path('update/upload/<int:id>', views.excelread, name="upload")
 ]

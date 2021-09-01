@@ -1,5 +1,7 @@
 import os
 import sqlite3
+
+import openpyxl
 import xlrd
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from xlsxwriter.workbook import Workbook
@@ -291,29 +293,32 @@ def excelwrite(request, id):
     conn.close()
     return redirect("/update/{}".format(pid[0]))
 
-"""
-def excelread(request ,id):
-    location = os.getcwd() #("C:/Users/Mert/Desktop/Örnek_Excel.xlsx")
-    workbook = xlrd.open_workbook(location)
-    sheet = workbook.sheet_by_index(0)
-    maxCell = 8
-    table = []
-    row = 1
-    cell = 0
-    try:
-        while sheet.cell_value(row, 0) != "":
-            rows = []
-            for cell in range(maxCell):
-                data = sheet.cell_value(row, cell+1)
-                rows.append(data)
-            table.append(rows)
-            row += 1
-    except:
-        pass
+def excelread(request, id):
+    if request.method == 'POST':
+        uploadedFile = request.FILES['file']
+        workbook = openpyxl.load_workbook(uploadedFile)
+        sheet = workbook["Sheet1"]
+        max = -1
+        excel_data = list()
+        for row in sheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            excel_data.append(row_data)
+            max = max + 1
 
-    #print(table)
-    return redirect("main")
-"""
+        num = 0
+        cell = 0
+        conn = sqlite3.connect('db.sqlite3')
+        for num in range(max):
+            y = 0
+            c = conn.cursor()
+            query = "INSERT INTO Demirbaş_App_device (stok, device, number, brand, serial, status, exp, model, person_id_id) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
+                .format(excel_data[num+1][y+1], excel_data[num+1][y+2], excel_data[num+1][y+3], excel_data[num+1][y+4], excel_data[num+1][y+6], excel_data[num+1][y+7], excel_data[num+1][y+8], excel_data[num+1][y+5], id)
+            c.execute(query)
+            conn.commit()
+        conn.close()
+        return redirect("/update/{}".format(id))
 
 @login_required(login_url = 'login')
 def dropdown(request, id, pid):
