@@ -1,9 +1,7 @@
 import os
 import sqlite3
-
 import openpyxl
-import xlrd
-from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from xlsxwriter.workbook import Workbook
 from .models import Worker, Device
 from .forms import RegisterForm, LoginForm, DataForm, WorkerName
@@ -13,13 +11,11 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 
 # Create your views here.
-
 @login_required(login_url = 'login')
 def Main(request):
-    data = Worker.objects.all()
+    data = Worker.objects.all().order_by('person')
     keyword = request.GET.get("keyword")
     key = request.GET.get("key")
-    superuser = Worker.objects.filter(superuser=1)
     if key:
         stok = Device.objects.filter(stok__contains=key)
         device = Device.objects.filter(device__contains=key)
