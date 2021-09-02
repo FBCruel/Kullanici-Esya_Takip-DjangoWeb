@@ -304,7 +304,6 @@ def excelread(request, id):
             max = max + 1
 
         num = 0
-        cell = 0
         conn = sqlite3.connect('db.sqlite3')
         for num in range(max):
             y = 0
