@@ -22,6 +22,3 @@ class Device(models.Model):
     zim_date = models.CharField(max_length=50, null=True, blank=True, verbose_name="Zimmet Tarihi")
     def __str__(self):
         return str(self.person_id)
-
-class Excel(models.Model):
-    file = models.FileField(null=True, blank=True, verbose_name="Dosya")

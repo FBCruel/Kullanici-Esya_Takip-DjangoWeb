@@ -67,14 +67,29 @@
             <a style="margin-left: 61.5%" class="btn btn-danger" href = "/delete/confirm/{{name.id}}" >Kişiyi Kaldır</a>
             <form method="POST"  action="/update/upload/{{name.id}}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input style="margin-top: 1%; margin-left: 8%; width:280px" type="file" class="btn btn-warning" name="file"/>
-                <input style="margin-top: 1%" type="submit" class="btn btn-warning" value="Yükle">
+                <input style="margin-bottom: 1%; margin-top: 1%; margin-left: 8%; width:280px" type="file" class="btn btn-warning" name="file"/>
+                <input style="margin-bottom: 1%; margin-top: 1%" type="submit" class="btn btn-warning" value="Yükle">
             </form>
         </div>
-    <hr>
     {% if datas %}
     <table class="table">
-    <thead class="thead-dark">
+        <thead class="thead-">
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th style="font-size: 28px;" scope="col">ZİMMET TABLOSU</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </thead>
         <thead class="thead-dark">
             <th scope="col">Stok</th>
             <th scope="col">Cihaz</th>
@@ -86,6 +101,8 @@
             <th scope="col">Açıklama</th>
             <th scope="col">Alım Tarihi</th>
             <th scope="col">Zimmet Tarihi</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>

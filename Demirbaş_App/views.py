@@ -230,6 +230,57 @@ def objectDelete(request, id):
         return redirect("/update/{}".format(pid[0]))
 
 @login_required(login_url = 'login')
+def about(request):
+    return render(request, "about.html")
+
+@login_required(login_url = 'login')
+def allExcelwrite(request):
+    conn = sqlite3.connect('db.sqlite3')
+    query = "SELECT stok, device, number, brand, model, serial, status, exp FROM Demirbaş_App_device"
+    result = conn.cursor()
+    result.execute(query)
+    data = result.fetchall()
+    workbook = Workbook(os.path.join(os.path.join(os.environ['USERPROFILE'])) + "\\Desktop\\Tüm Demirbaş.xlsx")
+    worksheet = workbook.add_worksheet()
+    worksheet.set_column(
+        "D:D", 5
+
+    )
+    worksheet.set_column(
+        "G:G",
+        30
+    )
+    cell_format1 = workbook.add_format({'bold': True, 'italic': False})
+
+    worksheet.write('D1', 'DEMİRBAŞ ENVANTER LİSTESİ', cell_format1)
+    worksheet.write('A3', 'S.NO', cell_format1)
+    worksheet.write('B3', 'STOK', cell_format1)
+    worksheet.write('C3', 'CİHAZ', cell_format1)
+    worksheet.write('D3', 'SAYI', cell_format1)
+    worksheet.write('E3', 'MARKA', cell_format1)
+    worksheet.write('F3', 'MODEL', cell_format1)
+    worksheet.write('G3', 'SERİ NO', cell_format1)
+    worksheet.write('H3', 'DURUMU', cell_format1)
+    worksheet.write('I3', 'AÇIKLAMA', cell_format1)
+    row = 0
+    cell = 0
+    id = 1
+    for row, veri in enumerate(data):
+        for cell, value in enumerate(veri):
+            print(value)
+            if str(value) == "None":
+                worksheet.write(row + 3, 0, id)
+                worksheet.write(row + 3, cell, value)
+            else:
+                worksheet.write(row + 3, 0, id)
+                worksheet.write(row + 3, cell + 1, value)
+        id += 1
+
+    workbook.close()
+    conn.close()
+    return redirect("allData")
+
+@login_required(login_url = 'login')
 def excelwrite(request, id):
     person = Worker.objects.filter(id=id)
     conn = sqlite3.connect('db.sqlite3')

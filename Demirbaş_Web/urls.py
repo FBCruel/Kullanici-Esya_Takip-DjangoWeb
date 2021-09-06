@@ -42,5 +42,7 @@ urlpatterns = [
     path('superregister', views.superregister, name="superregister"),
     path('register', views.register, name="register"),
     path('users', views.users, name="users"),
-    path('update/upload/<int:id>', views.excelread, name="upload")
+    path('update/upload/<int:id>', views.excelread, name="upload"),
+    path('allExcelwrite', views.allExcelwrite, name="allExcelwrite"),
+    path('about', views.about, name="about")
 ]
