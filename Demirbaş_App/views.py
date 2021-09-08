@@ -267,7 +267,6 @@ def allExcelwrite(request):
     id = 1
     for row, veri in enumerate(data):
         for cell, value in enumerate(veri):
-            print(value)
             if str(value) == "None":
                 worksheet.write(row + 3, 0, id)
                 worksheet.write(row + 3, cell, value)
@@ -296,7 +295,6 @@ def excelwrite(request, id):
     worksheet = workbook.add_worksheet()
     worksheet.set_column(
         "D:D", 5
-
     )
     worksheet.set_column(
         "G:G",
@@ -319,7 +317,6 @@ def excelwrite(request, id):
     id = 1
     for row, veri in enumerate(data):
         for cell, value in enumerate(veri):
-            print(value)
             if str(value) == "None":
                 worksheet.write(row + 3, 0, id)
                 worksheet.write(row + 3, cell, value)
