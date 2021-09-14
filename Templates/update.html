@@ -99,6 +99,11 @@
             <th scope="col">Seri No</th>
             <th scope="col">Durumu</th>
             <th scope="col">Açıklama</th>
+            {% if iz %}
+                <th scope="col">Eski Kullanıcı / Tarih</th>
+            {% else %}
+            {% endif %}
+            <th scope="col">Fiyat</th>
             <th scope="col">Alım Tarihi</th>
             <th scope="col">Zimmet Tarihi</th>
             <th scope="col"></th>
@@ -156,11 +161,28 @@
                     {% else %}
                     <td scope="row"></td>
                     {% endif %}
+
+                    {% if iz %}
+                        {% if data.iz %}
+                        <td scope="row">{{data.iz}}</td>
+                        {% else %}
+                        <td scope="row"></td>
+                    {% endif %}
+                    {% else %}
+                    {% endif %}
+
+                    {% if data.price %}
+                    <td scope="row">{{data.price}}</td>
+                    {% else %}
+                    <td scope="row"></td>
+                    {% endif %}
+
                     {% if data.take_date %}
                     <td scope="row">{{data.take_date}}</td>
                     {% else %}
                     <td scope="row"></td>
                     {% endif %}
+
                     {% if data.zim_date %}
                     <td scope="row">{{data.zim_date}}</td>
                     {% else %}
@@ -172,15 +194,18 @@
                           <button class="btn btn-dark">{{data.person_id}}</button>
                           <div class="dropdown-content">
                               {% for worker in workers %}
-                                <a href="/dropdown/{{data.id}}-{{worker.id}}">{{worker.person}}</a>
+                                <a href="/confirm/{{data.id}}-{{worker.id}}">{{worker.person}}</a>
                               {% endfor %}
                           </div>
                         </div>
                     </td>
                     {% else %}
                     {% endif %}
+                    <td scope="row"></td>
                     <td><a href="/object/edit/{{data.id}}" class=" btn btn-dark">Güncelle</a></td>
                     <td><a href="/object/confirm/{{data.id}}" class="btn btn-danger">Sil</a></td>
+                    <td scope="row"></td>
+                    <td scope="row"></td>
                 </tr>
             {% endfor %}
     </table>

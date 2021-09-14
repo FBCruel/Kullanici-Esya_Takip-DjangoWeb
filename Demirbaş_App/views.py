@@ -73,16 +73,17 @@ def Main(request):
 def update(request, id):
     datas = Device.objects.filter(person_id=id)
     person = Worker.objects.filter(id=id)
-    superuser = Worker.objects.filter(superuser=True)
+    superuser = Worker.objects.filter(superuser=1)
     devices = Device.objects.all()
     workers = Worker.objects.all()
     super = 1
+    iz = 1
     if person[0] in superuser:
         return render(request, "update.html", {"datas": devices, "name": person[0], "workers": workers, "super": super})
     else:
         try:
             if datas[0] != " ":
-                return render(request, "update.html", {"datas": datas, "name": person[0]})
+                return render(request, "update.html", {"datas": datas, "name": person[0], "iz": iz})
         except:
             return render(request, "update.html", {"name": person[0]})
 
@@ -105,7 +106,6 @@ def delete(request, id):
     result1 = conn.cursor()
     result1.execute(query1)
     sid = result1.fetchone()
-    print(sid[0], id)
     conn = sqlite3.connect('db.sqlite3')
     cursor = conn.cursor()
     query3 = "UPDATE Demirbaş_App_device SET person_id_id = '{}' WHERE person_id_id = '{}'".format(sid[0], id)
@@ -384,6 +384,47 @@ def dropdown(request, id, pid):
     conn.close()
     return redirect("/update/{}".format(adam[0]))
 
+@login_required(login_url='login')
+def dropConfirm(request, id, pid):
+    taker = Worker.objects.filter(id=pid)
+    device = Device.objects.filter(id=id)
+    mainperson = Worker.objects.filter(superuser=1)
+    conn = sqlite3.connect('db.sqlite3')
+    query3 = "SELECT id FROM Demirbaş_App_worker WHERE person = '{}'".format(mainperson[0])
+    result3 = conn.cursor()
+    result3.execute(query3)
+    adam = result3.fetchone()
+    return render(request, "dropConfirm.html", {"taker": taker[0], "device": device[0], "sayman": adam[0]})
+
+@login_required(login_url = 'login')
+def dropdownAll(request, id, pid):
+    person = Worker.objects.filter(id=pid)
+    mainperson = Worker.objects.filter(superuser=1)
+
+    conn = sqlite3.connect('db.sqlite3')
+    query3 =  "SELECT id FROM Demirbaş_App_worker WHERE person = '{}'".format(mainperson[0])
+    result3 = conn.cursor()
+    result3.execute(query3)
+    adam = result3.fetchone()
+    query1 = "SELECT id FROM Demirbaş_App_worker WHERE person = '{}'".format(person[0])
+    result1 = conn.cursor()
+    result1.execute(query1)
+    data = result1.fetchone()
+    cursor = conn.cursor()
+    query2 = "UPDATE Demirbaş_App_device SET person_id_id = '{}' WHERE id = {}".format(data[0], id)
+    cursor.execute(query2)
+    conn.commit()
+    conn.close()
+    return redirect("allData")
+
+@login_required(login_url='login')
+def dropConfirmAll(request, id, pid):
+    taker = Worker.objects.filter(id=pid)
+    device = Device.objects.filter(id=id)
+    mainperson = Worker.objects.filter(superuser=1)
+    all = 1
+    return render(request, "dropConfirm.html", {"taker": taker[0], "device": device[0], "all": all})
+
 def register(request):
     form = RegisterForm(request.POST or None)
     if form.is_valid():
@@ -469,3 +510,4 @@ def userDelete(request, id):
     conn.commit()
     conn.close()
     return redirect("users")
+

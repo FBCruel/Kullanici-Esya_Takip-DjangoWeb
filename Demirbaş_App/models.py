@@ -18,6 +18,8 @@ class Device(models.Model):
     serial = models.CharField(max_length=50, null=True, blank=True, verbose_name="Seri No")
     status = models.CharField(max_length=50, null=True, blank=True, verbose_name="Durumu")
     exp = models.CharField(max_length=100, null=True, blank=True, verbose_name="Açıklama")
+    iz = models.CharField(max_length=100000000, null=True, blank=True, verbose_name="İz")
+    price = models.CharField(max_length=15, null=True, blank=True, verbose_name="Fiyat")
     take_date = models.CharField(max_length=50, null=True, blank=True, verbose_name="Alım Tarihi")
     zim_date = models.CharField(max_length=50, null=True, blank=True, verbose_name="Zimmet Tarihi")
     def __str__(self):
