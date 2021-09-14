@@ -1,6 +1,8 @@
 import os
 import sqlite3
 import openpyxl
+import operator
+import re
 from django.shortcuts import render, redirect, get_object_or_404
 from xlsxwriter.workbook import Workbook
 from .models import Worker, Device
@@ -78,12 +80,18 @@ def update(request, id):
     workers = Worker.objects.all()
     super = 1
     iz = 1
+    username = request.user.username
     if person[0] in superuser:
-        return render(request, "update.html", {"datas": devices, "name": person[0], "workers": workers, "super": super})
+        if username == superuser[0].person:
+            sayman = 1
+            return render(request, "update.html", {"datas": devices, "name": person[0], "workers": workers, "super": super, "sayman": sayman})
+        else:
+            return render(request, "update.html", {"datas": devices, "name": person[0], "workers": workers, "super": super})
     else:
         try:
+            sayman = 1
             if datas[0] != " ":
-                return render(request, "update.html", {"datas": datas, "name": person[0], "iz": iz})
+                return render(request, "update.html", {"datas": datas, "name": person[0], "iz": iz, "sayman": sayman})
         except:
             return render(request, "update.html", {"name": person[0]})
 
@@ -236,7 +244,7 @@ def about(request):
 @login_required(login_url = 'login')
 def allExcelwrite(request):
     conn = sqlite3.connect('db.sqlite3')
-    query = "SELECT stok, device, number, brand, model, serial, status, exp FROM Demirbaş_App_device"
+    query = "SELECT stok, device, number, brand, model, serial, status, exp, iz, take_date, zim_date FROM Demirbaş_App_device"
     result = conn.cursor()
     result.execute(query)
     data = result.fetchall()
@@ -262,9 +270,15 @@ def allExcelwrite(request):
     worksheet.write('G3', 'SERİ NO', cell_format1)
     worksheet.write('H3', 'DURUMU', cell_format1)
     worksheet.write('I3', 'AÇIKLAMA', cell_format1)
+    worksheet.write('J3', 'ESKİ KULLANICI / TARİH', cell_format1)
+    worksheet.write('K3', 'FİYAT', cell_format1)
+    worksheet.write('L3', 'ALIM TARİHİ', cell_format1)
+    worksheet.write('M3', 'ZİMMET TARİHİ', cell_format1)
+
     row = 0
     cell = 0
     id = 1
+
     for row, veri in enumerate(data):
         for cell, value in enumerate(veri):
             if str(value) == "None":
@@ -287,7 +301,7 @@ def excelwrite(request, id):
     result1 = conn.cursor()
     result1.execute(query1)
     pid = result1.fetchone()
-    query2 = "SELECT stok, device, number, brand, model, serial, status, exp FROM Demirbaş_App_device WHERE person_id_id = '{}'".format(pid[0])
+    query2 = "SELECT stok, device, number, brand, model, serial, status, exp, iz, take_date, zim_date FROM Demirbaş_App_device WHERE person_id_id = '{}'".format(pid[0])
     result2 = conn.cursor()
     result2.execute(query2)
     data = result2.fetchall()
@@ -312,6 +326,10 @@ def excelwrite(request, id):
     worksheet.write('G3', 'SERİ NO', cell_format1)
     worksheet.write('H3', 'DURUMU', cell_format1)
     worksheet.write('I3', 'AÇIKLAMA', cell_format1)
+    worksheet.write('J3', 'ESKİ KULLANICI / TARİH', cell_format1)
+    worksheet.write('K3', 'FİYAT', cell_format1)
+    worksheet.write('L3', 'ALIM TARİHİ', cell_format1)
+    worksheet.write('M3', 'ZİMMET TARİHİ', cell_format1)
     row = 0
     cell = 0
     id = 1
@@ -356,8 +374,9 @@ def excelread(request, id):
         for num in range(max):
             y = 0
             c = conn.cursor()
-            query = "INSERT INTO Demirbaş_App_device (stok, device, number, brand, serial, status, exp, model, person_id_id) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
-                .format(excel_data[num+1][y+1], excel_data[num+1][y+2], excel_data[num+1][y+3], excel_data[num+1][y+4], excel_data[num+1][y+6], excel_data[num+1][y+7], excel_data[num+1][y+8], excel_data[num+1][y+5], id)
+            query = "INSERT INTO Demirbaş_App_device (stok, device, number, brand, serial, status, exp, model, person_id_id, take_date, zim_date, price, iz) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
+                .format(excel_data[num+1][y+1], excel_data[num+1][y+2], excel_data[num+1][y+3], excel_data[num+1][y+4], excel_data[num+1][y+6], excel_data[num+1][y+7],
+                        excel_data[num+1][y+8], excel_data[num+1][y+5], id, excel_data[num+1][y+11], excel_data[num+1][y+12], excel_data[num+1][y+10], excel_data[num+1][y+9])
             c.execute(query)
             conn.commit()
         conn.close()

@@ -203,7 +203,11 @@
                     {% endif %}
                     <td scope="row"></td>
                     <td><a href="/object/edit/{{data.id}}" class=" btn btn-dark">Güncelle</a></td>
-                    <td><a href="/object/confirm/{{data.id}}" class="btn btn-danger">Sil</a></td>
+                    {% if sayman %}
+                        <td><a href="/object/confirm/{{data.id}}" class="btn btn-danger">Sil</a></td>
+                    {% else %}
+                        <td scope="row"></td>
+                    {% endif %}
                     <td scope="row"></td>
                     <td scope="row"></td>
                 </tr>
