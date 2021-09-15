@@ -26,10 +26,13 @@ class Device(models.Model):
         return str(self.person_id)
 
 class History(models.Model):
-   who = models.CharField(max_length=50,null=True, blank=True, verbose_name="Kullanıcı Adı")
-   whom = models.CharField(max_length=50, null=True, blank=True, verbose_name="Etkilenen Kişi")
-   operation_type = models.CharField(max_length=30, null=True, blank=True, verbose_name="İşlem Türü")
-   stok = models.CharField(max_length=30, null=True, blank=True, verbose_name="Stok")
-   device = models.CharField(max_length=30, null=True, blank=True, verbose_name="Cihaz")
-   operation_date = models.CharField(max_length=40,null=True, blank=True, verbose_name="Tarih")
+    who = models.CharField(max_length=50,null=True, blank=True, verbose_name="Kullanıcı Adı")
+    whom = models.CharField(max_length=50, null=True, blank=True, verbose_name="Etkilenen Kişi")
+    operation_type = models.CharField(max_length=30, null=True, blank=True, verbose_name="İşlem Türü")
+    stok = models.CharField(max_length=30, null=True, blank=True, verbose_name="Stok")
+    device = models.CharField(max_length=30, null=True, blank=True, verbose_name="Cihaz")
+    operation_date = models.CharField(max_length=40,null=True, blank=True, verbose_name="Tarih")
+    def __str__(self):
+        return str(self.whom)
+
 

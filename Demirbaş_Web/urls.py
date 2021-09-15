@@ -48,6 +48,6 @@ urlpatterns = [
     path('update/upload/<int:id>', views.excelread, name="upload"),
     path('allExcelwrite', views.allExcelwrite, name="allExcelwrite"),
     path('about', views.about, name="about"),
-    path('history', views.history, name="history")
-
+    path('history', views.history, name="history"),
+    path('about', views.about, name="about")
 ]
