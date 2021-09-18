@@ -13,10 +13,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 
-locale.setlocale(locale.LC_ALL, '')
-an = datetime.datetime.now()
-tarih = datetime.datetime.strftime(an, '%c')
-
 # Create your views here.
 @login_required(login_url = 'login')
 def Main(request):
@@ -126,6 +122,9 @@ def delete(request, id):
     query3 = "UPDATE Demirbaş_App_device SET person_id_id = '{}' WHERE person_id_id = '{}'".format(sid[0], id)
     cursor.execute(query3)
     conn.commit()
+    locale.setlocale(locale.LC_ALL, '')
+    an = datetime.datetime.now()
+    tarih = datetime.datetime.strftime(an, '%c')
     query3 = "INSERT INTO Demirbaş_App_history (who, whom, operation_type, operation_date) VALUES ('{}', '{}', '{}', '{}')" \
         .format(username, person[0], "Çalışan Silindi", tarih)
     c = conn.cursor()
@@ -163,6 +162,9 @@ def addPerson(request):
         result.execute(query)
         name = result.fetchone()
         username = request.user.username
+        locale.setlocale(locale.LC_ALL, '')
+        an = datetime.datetime.now()
+        tarih = datetime.datetime.strftime(an, '%c')
         try:
             if str(form["person"].value()) != str(name[0]):
                 query2 = "INSERT INTO Demirbaş_App_history (who, operation_type, whom, operation_date) VALUES ('{}', '{}', '{}', '{}')" \
@@ -213,19 +215,14 @@ def addData(request, id):
         c.execute(query2)
         conn.commit()
 
-        username1 = request.user.username
+        username = request.user.username
+        locale.setlocale(locale.LC_ALL, '')
+        an = datetime.datetime.now()
+        tarih = datetime.datetime.strftime(an, '%c')
         query3 = "INSERT INTO Demirbaş_App_history (who, whom, operation_type, stok, device, operation_date) VALUES ('{}', '{}', '{}', '{}', '{}', '{}')" \
-            .format(username1, person[0], "Demirbaş Eklendi", str(form["stok"].value()), str(form["device"].value()), tarih)
+            .format(username, person[0], "Demirbaş Eklendi", str(form["stok"].value()), str(form["device"].value()), tarih)
         c = conn.cursor()
         c.execute(query3)
-        conn.commit()
-        conn.close()
-        query2 = "INSERT INTO Demirbaş_App_device (stok, device, number, brand, model, serial, status, exp, person_id_id) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"\
-                .format(str(form["stok"].value()), str(form["device"].value()), str(form["number"].value()), str(form["brand"].value()), str(form["model"].value()),
-                        str(form["serial"].value()), str(form["status"].value()), str(form["exp"].value()), pid[0])
-        c = conn.cursor()
-        c.execute(query2)
-        conn.commit()
         conn.close()
         return redirect("/update/{}".format(pid[0]))
 
@@ -239,10 +236,13 @@ def objectEdit(request, id):
     result = conn.cursor()
     result.execute(query)
     pid = result.fetchone()
-    username1 = request.user.username
+    username = request.user.username
+    locale.setlocale(locale.LC_ALL, '')
+    an = datetime.datetime.now()
+    tarih = datetime.datetime.strftime(an, '%c')
     form = DataForm(request.POST or None, request.FILES or None, instance=get_object_or_404(Device, id=id))
     query3 = "INSERT INTO Demirbaş_App_history (who, operation_type, stok, device, operation_date) VALUES ('{}', '{}', '{}', '{}', '{}')" \
-        .format(username1, "Veriler Düzenlendi", str(form["stok"].value()), str(form["device"].value()), tarih)
+        .format(username, "Veriler Düzenlendi", str(form["stok"].value()), str(form["device"].value()), tarih)
     c = conn.cursor()
     c.execute(query3)
     conn.commit()
@@ -271,8 +271,10 @@ def objectDelete(request, id):
     Result4 = conn.cursor()
     Result4.execute(query4)
     data = Result4.fetchall()
-    print(data)
 
+    locale.setlocale(locale.LC_ALL, '')
+    an = datetime.datetime.now()
+    tarih = datetime.datetime.strftime(an, '%c')
     if str(object[0]) == str(sayman[0]):
         query3 = "INSERT INTO Demirbaş_App_history (who, operation_type, stok, device, operation_date) VALUES ('{}', '{}', '{}', '{}', '{}')"\
                 .format(username, "Demirbaş Silindi", data[0][0], data[0][1], tarih)
@@ -431,6 +433,9 @@ def excelread(request, id):
 
         num = 0
         conn = sqlite3.connect('db.sqlite3')
+        locale.setlocale(locale.LC_ALL, '')
+        an = datetime.datetime.now()
+        tarih = datetime.datetime.strftime(an, '%c')
         for num in range(max):
             y = 0
             c = conn.cursor()
@@ -439,9 +444,9 @@ def excelread(request, id):
                         excel_data[num+1][y+8], excel_data[num+1][y+5], id, excel_data[num+1][y+11], excel_data[num+1][y+12], excel_data[num+1][y+10], excel_data[num+1][y+9])
             c.execute(query)
             conn.commit(),
-            username1 = request.user.username
+            username = request.user.username
             query3 = "INSERT INTO Demirbaş_App_history (who, whom, operation_type, stok, device, operation_date) VALUES ('{}', '{}', '{}', '{}', '{}', '{}')" \
-                .format(username1, person[0], "Demirbaş Eklendi", excel_data[num+1][y+1], excel_data[num+1][y+2], tarih)
+                .format(username, person[0], "Demirbaş Eklendi", excel_data[num+1][y+1], excel_data[num+1][y+2], tarih)
             c = conn.cursor()
             c.execute(query3)
             conn.commit()
@@ -458,11 +463,23 @@ def dropdown(request, id, pid):
     result3 = conn.cursor()
     result3.execute(query3)
     adam = result3.fetchone()
+
     query1 = "SELECT id FROM Demirbaş_App_worker WHERE person = '{}'".format(person[0])
     result1 = conn.cursor()
     result1.execute(query1)
     data = result1.fetchone()
     cursor = conn.cursor()
+
+    username = request.user.username
+    locale.setlocale(locale.LC_ALL, '')
+    an = datetime.datetime.now()
+    tarih = datetime.datetime.strftime(an, '%c')
+    query4 = "INSERT INTO Demirbaş_App_history (who, whom, operation_type, operation_date) VALUES ('{}', '{}', '{}', '{}')" \
+        .format(username, person[0], "{} kişisine Eklendi", tarih).format(mainperson[0])
+    result4 = conn.cursor()
+    result4.execute(query4)
+    conn.commit()
+
     query2 = "UPDATE Demirbaş_App_device SET person_id_id = '{}' WHERE id = {}".format(data[0], id)
     cursor.execute(query2)
     conn.commit()
@@ -474,11 +491,13 @@ def dropConfirm(request, id, pid):
     taker = Worker.objects.filter(id=pid)
     device = Device.objects.filter(id=id)
     mainperson = Worker.objects.filter(superuser=1)
+
     conn = sqlite3.connect('db.sqlite3')
     query3 = "SELECT id FROM Demirbaş_App_worker WHERE person = '{}'".format(mainperson[0])
     result3 = conn.cursor()
     result3.execute(query3)
     adam = result3.fetchone()
+    print(adam[0])
     return render(request, "dropConfirm.html", {"taker": taker[0], "device": device[0], "sayman": adam[0]})
 
 @login_required(login_url = 'login')
@@ -491,11 +510,23 @@ def dropdownAll(request, id, pid):
     result3 = conn.cursor()
     result3.execute(query3)
     adam = result3.fetchone()
+
     query1 = "SELECT id FROM Demirbaş_App_worker WHERE person = '{}'".format(person[0])
     result1 = conn.cursor()
     result1.execute(query1)
     data = result1.fetchone()
     cursor = conn.cursor()
+
+    username = request.user.username
+    locale.setlocale(locale.LC_ALL, '')
+    an = datetime.datetime.now()
+    tarih = datetime.datetime.strftime(an, '%c')
+    query4 = "INSERT INTO Demirbaş_App_history (who, whom, operation_type, operation_date) VALUES ('{}', '{}', '{}', '{}')" \
+        .format(username, mainperson[0], "{} kişisine Eklendi", tarih).format(person[0])
+    result4 = conn.cursor()
+    result4.execute(query4)
+    conn.commit()
+
     query2 = "UPDATE Demirbaş_App_device SET person_id_id = '{}' WHERE id = {}".format(data[0], id)
     cursor.execute(query2)
     conn.commit()
@@ -517,13 +548,9 @@ def register(request):
         password = form.cleaned_data.get("password")
         key = form.cleaned_data.get("special_key")
 
-        
-
         newUser = User(username=username)
         newUser.set_password(password)
-
         newUser.save()
-
         return redirect("login")
 
     context = {"form": form}    
@@ -550,9 +577,7 @@ def superregister(request):
         query2 = "INSERT INTO Demirbaş_App_worker (person, superuser) VALUES ('{}', {})".format(person, 1)
         c2.execute(query2)
         conn.commit()
-
         return redirect("login")
-
     context = {"form": form}
     return render(request, "superregister.html", context)
 
@@ -567,13 +592,11 @@ def users(request):
     for x in range(9):
         list = []
         for y in range(5):
-
             try:
                 list.append(data[x][y])
             except:
                 break
         datas.append(list)
-
     return render(request, "Users.html", {"datas": datas})
 
 @login_required(login_url = 'login')
